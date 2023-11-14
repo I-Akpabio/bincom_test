@@ -1,0 +1,185 @@
+<html>
+  <head>
+    <title>Polling Unit Result</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200&family=Poppins:ital,wght@0,300;0,500;0,700;1,300&family=Roboto:wght@100;300;400&display=swap"
+      rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="#">Polling Results</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarScroll"
+          aria-controls="navbarScroll"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+          <ul
+            class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+            style="--bs-scroll-height: 100px"
+          >
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/total-results">Total Results</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/new-results">New Results</a>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <% if(typeof activeLga != 'object') { %>
+      <h3 class="mt-4">Get Results</h3>
+      <% }else {%>
+      <h3 class="mt-4"><%= activeLga.lga_name%> LGA Results</h3>
+      <% }%>
+
+      <form action="">
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="">Select State</label>
+            <select name="state" id="state" class="form-control">
+              <option value="">Select</option>
+            </select>
+          </div>
+
+          <div class="col-sm-3">
+            <label for="">Select L.G.A</label>
+            <select name="lga" id="lga" class="form-control">
+              <option value="">Select</option>
+            </select>
+          </div>
+
+          <div class="col-2">
+            <button class="btn btn-primary mt-4">Find</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="row">
+        <% if(typeof totals != 'undefined') { %> <%
+        Object.keys(totals).forEach(function(key){%>
+        <div class="col-3">
+          <div class="card mt-3" style="background-color: blueviolet; color: white;">
+            <div class="card-body">
+              <h5><%= key %></h5>
+              <h1 style="text-align: right"><%= totals[key] %></h1>
+            </div>
+          </div>
+        </div>
+
+        <% });%> <% }%>
+      </div>
+
+      <h4 class="mt-4">Breakdown</h4>
+      <% if(typeof partyresult != 'undefined') { %>
+      <table class="table">
+        <thead>
+          <% for (let i = 0; i < partyresult.length; i++) { %>
+          <th><%= partyresult[i].partyname %></th>
+          <% }%>
+        </thead>
+        <tbody>
+          <% for (let i = 0; i < finalResult.length; i++) { %>
+          <tr>
+            <% for (let j = 0; j < finalResult[i].length; j++) { %>
+            <td><%= finalResult[i][j] %></td>
+            <% }%>
+          </tr>
+          <% }%>
+        </tbody>
+      </table>
+      <% }%>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
+    <script>
+      const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+      });
+
+      $.ajax({
+        type: "GET",
+        contentType: "application/json",
+        url: "/states",
+      }).done((data) => {
+        let str = "";
+        data.forEach((element) => {
+          str += ` <option value="${element.state_id}">${element.state_name}</option>`;
+        });
+        $("#state").append(str).select2({ theme: "bootstrap-5" });
+
+        if (params.state) {
+          $("#state").val(params.state).trigger("change");
+        }
+      });
+
+      $("#state").on("change", (e) => {
+        $.get(`/lga-of-state?state=${$("#state").val()}`).done((data) => {
+          let str = "";
+          data.forEach((element) => {
+            str += ` <option value="${element.lga_id}">${element.lga_name}</option>`;
+          });
+          $("#lga").append(str);
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>
