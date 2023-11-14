@@ -3,12 +3,13 @@ var bodyParser = require("body-parser");
 const moment = require("moment");
 const _ = require("lodash");
 
+// Just used to quick demo purposes
 var con = mysql.createConnection({
-  host: "127.0.0.1",
+  host: "db4free.net",
   port: "3306",
-  user: "root",
-  password: "",
-  database: "bincomphptest",
+  user: "akpabioi",
+  password: "tonymetalsuit94",
+  database: "akpabiobincom",
 });
 
 const express = require("express");
