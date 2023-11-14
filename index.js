@@ -83,9 +83,39 @@ app.get("/lga-of-state", (req, res) => {
   );
 });
 
+app.get("/all-polling-unit-of-lga", (req, res) => {
+  con.query(
+    `select * from polling_unit where lga_id='${req.query.lga}'`,
+    (err, result) => {
+      if (err) {
+        res.send("Error");
+      }
+
+      res.send(result);
+    }
+  );
+});
+
+
+app.get("/one-polling-unit", (req, res) => {
+  con.query(
+    `select * from polling_unit where uniqueid='${req.query.punit}'`,
+    (err, result) => {
+      if (err) {
+        res.send("Error");
+      }
+
+      res.send(result);
+    }
+  );
+});
+
 app.get("/polling-unit-of-lga", (req, res) => {
   con.query(
-    `SELECT * FROM polling_unit WHERE lga_id='${req.query.lga}'`,
+    `select * from polling_unit 
+    where polling_unit.uniqueid not in 
+      (select polling_unit_uniqueid from announced_pu_results) 
+    AND lga_id='${req.query.lga}'`,
     (err, result) => {
       if (err) {
         res.send("Error");

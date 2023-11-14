@@ -82,7 +82,7 @@
     </nav>
 
     <div class="container">
-      <h3 class="mt-4"><%= title %></h3>
+      <h3 id="title" class="mt-4"><%= title %></h3>
       <form action="">
         <div class="row">
           <div class="row">
@@ -171,6 +171,14 @@
       if (params.state) {
           $("#state").val(params.state).trigger("change");
         }
+
+        if(params.punit) {
+          $.get(`/one-polling-unit?punit=${params.punit}`).done(data=> {
+            if(data && data.length){
+              $("#title").text(data[0].polling_unit_name+ " Polling Unit Result");
+            }
+          })
+        }
         
       });
 
@@ -193,7 +201,7 @@
       });
 
       $("#lga").on("change", (e) => {
-        $.get(`/polling-unit-of-lga?lga=${$("#lga").val()}`).done((data) => {
+        $.get(`/all-polling-unit-of-lga?lga=${$("#lga").val()}`).done((data) => {
           let str = "";
           // data.forEach((element) => {
           //   str += ` <option value="${element.uniqueid }">${element.polling_unit_name}</option>`;
